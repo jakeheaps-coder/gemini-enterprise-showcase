@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gemini Enterprise at Domo Marketing</title>
+  <meta name="description" content="How one marketing team built an AI-powered operating system with 5 production Gemini Enterprise agents, automated workflows, and a Knowledge Graph backbone.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --domo-blue: #99CCEE;
+      --domo-blue-dark: #7BB8E0;
+      --neutral-50: #F1F6FA;
+      --neutral-100: #DCE4EA;
+      --neutral-200: #B7C1CB;
+      --neutral-600: #68737F;
+      --neutral-900: #3F454D;
+      --accent-orange: #FF9922;
+      --accent-orange-hover: #E8891F;
+      --accent-mint: #ADD4C1;
+      --font-primary: 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --shadow-sm: 0 1px 3px rgba(63,69,77,0.08), 0 1px 2px rgba(63,69,77,0.06);
+      --shadow-md: 0 4px 12px rgba(63,69,77,0.1), 0 2px 4px rgba(63,69,77,0.06);
+      --shadow-lg: 0 8px 20px rgba(63,69,77,0.08), 0 4px 8px rgba(63,69,77,0.04);
+      --shadow-orange-glow: 0 4px 20px rgba(255, 153, 34, 0.3);
+      --shadow-blue-glow: 0 4px 20px rgba(153, 204, 238, 0.3);
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --ease-smooth: cubic-bezier(0.83, 0, 0.17, 1);
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-primary);
+      color: var(--neutral-900);
+      background: #FFFFFF;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    #progressBar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--domo-blue), var(--accent-orange));
+      z-index: 1000;
+      transition: width 0.1s linear;
+    }
+
+    /* ===== NAVBAR ===== */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--neutral-100);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      padding: 0 2rem;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-right: 2rem;
+      text-decoration: none;
+    }
+
+    .navbar-brand svg { height: 24px; width: auto; }
+
+    .navbar-title {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: var(--neutral-900);
+      letter-spacing: -0.01em;
+    }
+
+    .navbar-links {
+      display: flex;
+      gap: 0.25rem;
+      margin-left: auto;
+    }
+
+    .nav-link {
+      padding: 0.375rem 0.875rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--neutral-600);
+      text-decoration: none;
+      border-radius: 100px;
+      transition: all 0.2s var(--ease-smooth);
+    }
+
+    .nav-link:hover { color: var(--neutral-900); background: var(--neutral-50); }
+    .nav-link.active { color: var(--neutral-900); background: rgba(153, 204, 238, 0.15); }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative;
+      min-height: 480px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: linear-gradient(180deg, var(--domo-blue) 0%, var(--domo-blue-dark) 100%);
+      overflow: hidden;
+      padding: 6rem 2rem 4rem;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.15) 0%, transparent 70%);
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 50% at 80% 100%, rgba(255, 153, 34, 0.08) 0%, transparent 60%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.375rem 1rem;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 100px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: #FFFFFF;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-mint);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.3); }
+    }
+
+    .hero h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-size: 1.125rem;
+      color: rgba(255,255,255,0.85);
+      font-weight: 400;
+      line-height: 1.6;
+      max-width: 560px;
+      margin: 0 auto 2rem;
+    }
+
+    .hero-scroll-hint {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      color: rgba(255,255,255,0.5);
+      font-weight: 400;
+    }
+
+    .hero-scroll-hint svg {
+      width: 20px;
+      height: 20px;
+      stroke: rgba(255,255,255,0.4);
+      animation: float 2s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* ===== SECTIONS ===== */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    section {
+      padding: 5rem 0;
+    }
+
+    section:nth-child(odd) { background: #FFFFFF; }
+    section:nth-child(even) { background: var(--neutral-50); }
+
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-orange);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--neutral-900);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .section-subtitle {
+      font-size: 1.0625rem;
+      color: var(--neutral-600);
+      max-width: 640px;
+      line-height: 1.6;
+    }
+
+    /* ===== STATS BAR ===== */
+    .stats-section {
+      background: var(--neutral-900);
+      padding: 2.5rem 0;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.5rem;
+      text-align: center;
+    }
+
+    .stat-item { color: #FFFFFF; }
+
+    .stat-number {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--domo-blue);
+      line-height: 1;
+      margin-bottom: 0.375rem;
+    }
+
+    .stat-label {
+      font-size: 0.8125rem;
+      font-weight: 400;
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ===== VISION ===== */
+    .vision-content {
+      max-width: 720px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .vision-content p {
+      font-size: 1.1875rem;
+      color: var(--neutral-600);
+      line-height: 1.7;
+    }
+
+    .vision-content p strong {
+      color: var(--neutral-900);
+      font-weight: 700;
+    }
+
+    /* ===== AGENT CARDS ===== */
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+    }
+
+    .agent-card {
+      padding: 2rem;
+      background: #FFFFFF;
+      border: 1px solid var(--neutral-100);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s var(--ease-out-expo);
+    }
+
+    .agent-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(153, 204, 238, 0.3);
+    }
+
+    .agent-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+      font-size: 1.5rem;
+    }
+
+    .agent-icon.blue { background: rgba(153, 204, 238, 0.12); color: var(--domo-blue); }
+    .agent-icon.orange { background: rgba(255, 153, 34, 0.1); color: var(--accent-orange); }
+    .agent-icon.mint { background: rgba(173, 212, 193, 0.2); color: #6BA88A; }
+
+    .agent-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .agent-card h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--neutral-900);
+      margin-bottom: 0.625rem;
+    }
+
+    .agent-card p {
+      font-size: 0.9375rem;
+      color: var(--neutral-600);
+      line-height: 1.6;
+    }
+
+    .agent-tag {
+      display: inline-block;
+      padding: 0.25rem 0.625rem;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-radius: 100px;
+      margin-top: 1rem;
+    }
+
+    .agent-tag.live {
+      background: rgba(173, 212, 193, 0.2);
+      color: #4A8A6A;
+    }
+
+    .agent-tag.auto {
+      background: rgba(153, 204, 238, 0.15);
+      color: #5A9CC0;
+    }
+
+    /* ===== FEATURED AGENT (full-width) ===== */
+    .featured-agent {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+      margin-top: 2.5rem;
+    }
+
+    .featured-agent-visual {
+      background: linear-gradient(135deg, rgba(153, 204, 238, 0.08), rgba(255, 153, 34, 0.05));
+      border: 1px solid var(--neutral-100);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .visual-stat {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .visual-stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent-orange);
+      min-width: 80px;
+    }
+
+    .visual-stat-label {
+      font-size: 0.9375rem;
+      color: var(--neutral-600);
+    }
+
+    .featured-agent-text h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      color: var(--neutral-900);
+    }
+
+    .featured-agent-text p {
+      font-size: 1rem;
+      color: var(--neutral-600);
+      line-height: 1.7;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ===== AUTOMATION CARDS ===== */
+    .automation-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+    }
+
+    .auto-card {
+      padding: 2rem;
+      background: #FFFFFF;
+      border: 1px solid var(--neutral-100);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s var(--ease-out-expo);
+    }
+
+    .auto-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .auto-card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .auto-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 153, 34, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auto-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--accent-orange);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .auto-card h3 {
+      font-size: 1.0625rem;
+      font-weight: 700;
+      color: var(--neutral-900);
+    }
+
+    .auto-card p {
+      font-size: 0.9375rem;
+      color: var(--neutral-600);
+      line-height: 1.6;
+    }
+
+    .auto-schedule {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      margin-top: 1rem;
+      padding: 0.25rem 0.75rem;
+      background: var(--neutral-50);
+      border-radius: 100px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--neutral-600);
+    }
+
+    .auto-schedule .dot-green {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4A8A6A;
+    }
+
+    /* ===== FOUNDATION ===== */
+    .foundation-visual {
+      margin-top: 2.5rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .foundation-card {
+      padding: 1.75rem;
+      background: #FFFFFF;
+      border: 1px solid var(--neutral-100);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      text-align: center;
+      transition: all 0.3s var(--ease-out-expo);
+    }
+
+    .foundation-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .foundation-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(153, 204, 238, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+
+    .foundation-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--domo-blue);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .foundation-card h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--neutral-900);
+    }
+
+    .foundation-card p {
+      font-size: 0.875rem;
+      color: var(--neutral-600);
+      line-height: 1.5;
+    }
+
+    /* ===== IMPACT ===== */
+    .impact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 2.5rem;
+    }
+
+    .impact-card {
+      display: flex;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: #FFFFFF;
+      border: 1px solid var(--neutral-100);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s var(--ease-out-expo);
+    }
+
+    .impact-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .impact-icon {
+      width: 40px;
+      height: 40px;
+      min-width: 40px;
+      border-radius: 50%;
+      background: rgba(255, 153, 34, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .impact-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--accent-orange);
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .impact-card h3 {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--neutral-900);
+      margin-bottom: 0.375rem;
+    }
+
+    .impact-card p {
+      font-size: 0.875rem;
+      color: var(--neutral-600);
+      line-height: 1.5;
+    }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background: var(--neutral-900);
+      text-align: center;
+      padding: 3rem 2rem;
+    }
+
+    .footer svg { height: 32px; width: auto; margin-bottom: 1rem; }
+
+    .footer p {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    .footer a {
+      color: var(--domo-blue);
+      text-decoration: none;
+    }
+
+    .footer a:hover { text-decoration: underline; }
+
+    .footer-divider {
+      width: 40px;
+      height: 1px;
+      background: rgba(255,255,255,0.1);
+      margin: 1.25rem auto;
+    }
+
+    .footer-small {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* ===== ANIMATIONS ===== */
+    .animate-on-scroll {
+      opacity: 0;
+      transform: translateY(2rem);
+      transition: opacity 0.6s var(--ease-out-expo), transform 0.6s var(--ease-out-expo);
+    }
+
+    .animate-on-scroll.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Staggered animation delays for grids */
+    .agents-grid .animate-on-scroll:nth-child(2) { transition-delay: 0.1s; }
+    .agents-grid .animate-on-scroll:nth-child(3) { transition-delay: 0.2s; }
+    .agents-grid .animate-on-scroll:nth-child(4) { transition-delay: 0.3s; }
+    .automation-grid .animate-on-scroll:nth-child(2) { transition-delay: 0.1s; }
+    .foundation-visual .animate-on-scroll:nth-child(2) { transition-delay: 0.1s; }
+    .foundation-visual .animate-on-scroll:nth-child(3) { transition-delay: 0.2s; }
+    .impact-grid .animate-on-scroll:nth-child(2) { transition-delay: 0.1s; }
+    .impact-grid .animate-on-scroll:nth-child(3) { transition-delay: 0.2s; }
+    .impact-grid .animate-on-scroll:nth-child(4) { transition-delay: 0.3s; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .hero { min-height: 400px; padding: 5rem 1.5rem 3rem; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem 1rem; }
+      .stats-grid .stat-item:last-child { grid-column: 1 / -1; }
+      .agents-grid { grid-template-columns: 1fr; }
+      .featured-agent { grid-template-columns: 1fr; }
+      .automation-grid { grid-template-columns: 1fr; }
+      .foundation-visual { grid-template-columns: 1fr; }
+      .impact-grid { grid-template-columns: 1fr; }
+      .navbar-links { display: none; }
+      .section-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Progress Bar -->
+  <div id="progressBar"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a class="navbar-brand" href="#">
+      <svg viewBox="0 0 300 76" xmlns="http://www.w3.org/2000/svg">
+        <path d="M37.5 0C16.8 0 0 16.8 0 37.5S16.8 75 37.5 75 75 58.2 75 37.5 58.2 0 37.5 0zm0 56.3c-10.4 0-18.8-8.4-18.8-18.8s8.4-18.8 18.8-18.8 18.8 8.4 18.8 18.8-8.4 18.8-18.8 18.8z" fill="#99CCEE"/>
+        <path d="M112.5 18.8c-10.4 0-18.8 8.4-18.8 18.7s8.4 18.8 18.8 18.8 18.8-8.4 18.8-18.8-8.4-18.7-18.8-18.7zm0 28.1c-5.2 0-9.4-4.2-9.4-9.4s4.2-9.4 9.4-9.4 9.4 4.2 9.4 9.4-4.2 9.4-9.4 9.4z" fill="#99CCEE"/>
+        <path d="M187.5 18.8c-10.4 0-18.8 8.4-18.8 18.7s8.4 18.8 18.8 18.8 18.8-8.4 18.8-18.8-8.4-18.7-18.8-18.7zm0 28.1c-5.2 0-9.4-4.2-9.4-9.4s4.2-9.4 9.4-9.4 9.4 4.2 9.4 9.4-4.2 9.4-9.4 9.4z" fill="#99CCEE"/>
+        <path d="M150 18.8c-5.2 0-9.4 4.2-9.4 9.4v18.7c0 5.2 4.2 9.4 9.4 9.4s9.4-4.2 9.4-9.4V28.2c0-5.2-4.2-9.4-9.4-9.4zM150 0c-5.2 0-9.4 4.2-9.4 9.4s4.2 9.4 9.4 9.4 9.4-4.2 9.4-9.4S155.2 0 150 0z" fill="#99CCEE"/>
+      </svg>
+      <span class="navbar-title">Gemini Enterprise</span>
+    </a>
+    <div class="navbar-links">
+      <a href="#overview" class="nav-link">Overview</a>
+      <a href="#agents" class="nav-link">Agents</a>
+      <a href="#automation" class="nav-link">Automation</a>
+      <a href="#foundation" class="nav-link">Foundation</a>
+      <a href="#impact" class="nav-link">Impact</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="hero-badge"><span class="dot"></span> 5 Production Agents &middot; Live Today</div>
+      <h1>Gemini Enterprise<br>at Domo Marketing</h1>
+      <p>How one marketing team built an AI-powered operating system — with specialized agents, automated workflows, and a Knowledge Graph that keeps everything accurate.</p>
+      <div class="hero-scroll-hint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stats Bar -->
+  <div class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item animate-on-scroll">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Production Agents</div>
+        </div>
+        <div class="stat-item animate-on-scroll">
+          <div class="stat-number">55+</div>
+          <div class="stat-label">AI-Powered Tools</div>
+        </div>
+        <div class="stat-item animate-on-scroll">
+          <div class="stat-number">12+</div>
+          <div class="stat-label">Live Datasets</div>
+        </div>
+        <div class="stat-item animate-on-scroll">
+          <div class="stat-number">18+</div>
+          <div class="stat-label">Competitors Tracked</div>
+        </div>
+        <div class="stat-item animate-on-scroll">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">KG-Validated Content</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overview / Vision -->
+  <section id="overview">
+    <div class="container">
+      <div class="vision-content animate-on-scroll">
+        <div class="section-label">The Approach</div>
+        <h2 class="section-title" style="text-align: center;">Not Chatbots. Specialized AI Teammates.</h2>
+        <p style="margin-top: 1.5rem;">
+          Every agent is purpose-built for one job and grounded in a <strong>Knowledge Graph</strong> — a structured database of Domo's official messaging, products, competitors, and compliance data. This means agents don't just generate content — they generate <strong>accurate</strong> content, validated against the company's source of truth. The result is an AI-powered marketing team that's both creative and trustworthy.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Agent Showcase -->
+  <section id="agents">
+    <div class="container">
+      <div class="animate-on-scroll">
+        <div class="section-label">Gemini Enterprise Agents</div>
+        <h2 class="section-title">Five Agents. Five Specializations.</h2>
+        <p class="section-subtitle">Each agent is deployed to Gemini Enterprise and available to the team through Google Chat. They share the same Knowledge Graph backbone but each solves a distinct marketing challenge.</p>
+      </div>
+
+      <div class="agents-grid">
+
+        <!-- Agent 1: KG Assistant -->
+        <div class="agent-card animate-on-scroll">
+          <div class="agent-icon blue">
+            <svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </div>
+          <h3>Knowledge Graph Assistant</h3>
+          <p>The content engine. Drafts emails, pitch decks, battle cards, and blog posts — then automatically fact-checks every Domo claim against the Knowledge Graph before delivering. Reads uploaded PDFs, images, and URLs natively.</p>
+          <span class="agent-tag live">Live in Production</span>
+        </div>
+
+        <!-- Agent 2: CMO Intel -->
+        <div class="agent-card animate-on-scroll">
+          <div class="agent-icon orange">
+            <svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+          </div>
+          <h3>CMO Marketing Intelligence</h3>
+          <p>The executive analyst. Answers any marketing performance question — attribution, pipeline, conversion, ROI — with live data and a direct link to the exact Domo dashboard card. Tested across 110 real-world questions with 100% accuracy.</p>
+          <span class="agent-tag live">Live in Production</span>
+        </div>
+
+        <!-- Agent 3: Clanker 5000 -->
+        <div class="agent-card animate-on-scroll">
+          <div class="agent-icon blue">
+            <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+          </div>
+          <h3>Clanker 5000</h3>
+          <p>The paid media specialist. Queries live keyword performance data across four global regions, generates Google Ads, LinkedIn ads, and display copy, and clusters thousands of keywords using semantic analysis to find optimization opportunities.</p>
+          <span class="agent-tag live">Live in Production</span>
+        </div>
+
+        <!-- Agent 4: ADM Discovery -->
+        <div class="agent-card animate-on-scroll">
+          <div class="agent-icon mint">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <h3>ADM Discovery Agent</h3>
+          <p>The sales coach. Generates tailored discovery questions for Domo's field sales teams based on the prospect's industry, persona, and deal stage — all grounded in official messaging so reps always lead with the right value proposition.</p>
+          <span class="agent-tag live">Live in Production</span>
+        </div>
+
+        <!-- Agent 5: Competitive Intel -->
+        <div class="agent-card animate-on-scroll">
+          <div class="agent-icon orange">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          </div>
+          <h3>Competitive Intel Agent</h3>
+          <p>The always-on analyst. Tracks 18+ competitors using live Google Search grounding, generates battle cards on demand, monitors M&A signals, and identifies common market misconceptions — then validates everything against the Knowledge Graph.</p>
+          <span class="agent-tag live">Live in Production</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Automation -->
+  <section id="automation">
+    <div class="container">
+      <div class="animate-on-scroll">
+        <div class="section-label">Automated Workflows</div>
+        <h2 class="section-title">Agents That Work While You Sleep</h2>
+        <p class="section-subtitle">Beyond on-demand agents, Gemini powers automated pipelines that run on schedule — collecting intelligence, generating reports, and delivering insights to leadership without anyone lifting a finger.</p>
+      </div>
+
+      <div class="automation-grid">
+        <div class="auto-card animate-on-scroll">
+          <div class="auto-card-header">
+            <div class="auto-icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <h3>Daily Competitive Intelligence</h3>
+          </div>
+          <p>Every morning at 7am, Gemini researches all 18+ tracked competitors, checks for product updates, monitors M&A signals, and identifies new market misconceptions. Results are written to a live database and a digest email is sent to marketing leadership.</p>
+          <div class="auto-schedule"><span class="dot-green"></span> Runs daily at 7:00 AM</div>
+        </div>
+
+        <div class="auto-card animate-on-scroll">
+          <div class="auto-card-header">
+            <div class="auto-icon">
+              <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <h3>Weekly Executive Report</h3>
+          </div>
+          <p>Automatically generates the CMO's weekly staff report by pulling data from live Domo dashboards, the marketing calendar, and reference documents — then writes the finished report back to SharePoint and notifies the team.</p>
+          <div class="auto-schedule"><span class="dot-green"></span> Runs weekly on Fridays</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Foundation -->
+  <section id="foundation">
+    <div class="container">
+      <div class="animate-on-scroll" style="text-align: center;">
+        <div class="section-label">The Foundation</div>
+        <h2 class="section-title" style="margin-left: auto; margin-right: auto;">One Source of Truth for Every Agent</h2>
+        <p class="section-subtitle" style="margin-left: auto; margin-right: auto; text-align: center;">The Knowledge Graph is what makes this system trustworthy. It's a structured database of everything official about Domo — and every agent queries it to validate its output before delivering results.</p>
+      </div>
+
+      <div class="foundation-visual">
+        <div class="foundation-card animate-on-scroll">
+          <div class="foundation-icon">
+            <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+          </div>
+          <h3>Messaging Knowledge Graph</h3>
+          <p>Products, competitors, industries, value propositions, pain points, compliance data — all structured and queryable through a REST API.</p>
+        </div>
+
+        <div class="foundation-card animate-on-scroll">
+          <div class="foundation-icon">
+            <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <h3>Automatic Validation</h3>
+          <p>Every piece of content passes through a 6-layer fact-checking cascade before delivery — ensuring no hallucinated claims make it to the end user.</p>
+        </div>
+
+        <div class="foundation-card animate-on-scroll">
+          <div class="foundation-icon">
+            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h3>Design Knowledge Graph</h3>
+          <p>Brand guidelines, color systems, typography rules, and component specs — so AI-generated designs are always on-brand and consistent.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Impact -->
+  <section id="impact">
+    <div class="container">
+      <div class="animate-on-scroll">
+        <div class="section-label">What Makes This Different</div>
+        <h2 class="section-title">Not Just AI — Accurate AI</h2>
+        <p class="section-subtitle">Most teams experiment with AI. This team built a production system where accuracy isn't optional — it's enforced by architecture.</p>
+      </div>
+
+      <div class="impact-grid">
+        <div class="impact-card animate-on-scroll">
+          <div class="impact-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div>
+            <h3>Shared Source of Truth</h3>
+            <p>All five agents query the same Knowledge Graph. When messaging changes, every agent updates instantly — no retraining required.</p>
+          </div>
+        </div>
+
+        <div class="impact-card animate-on-scroll">
+          <div class="impact-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <h3>Creative AND Accurate</h3>
+            <p>Agents draft with full Gemini creativity, then validate every claim. The result is content that's both compelling and trustworthy.</p>
+          </div>
+        </div>
+
+        <div class="impact-card animate-on-scroll">
+          <div class="impact-icon">
+            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+          </div>
+          <div>
+            <h3>Specialized, Not Generic</h3>
+            <p>Each agent is purpose-built for one job — paid media, competitive intel, sales enablement — not a one-size-fits-all chatbot.</p>
+          </div>
+        </div>
+
+        <div class="impact-card animate-on-scroll">
+          <div class="impact-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div>
+            <h3>Built by One Person</h3>
+            <p>This entire system — five agents, two automations, two Knowledge Graphs — was built and is maintained by a single person on the marketing team.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <svg viewBox="0 0 300 76" xmlns="http://www.w3.org/2000/svg">
+      <path d="M37.5 0C16.8 0 0 16.8 0 37.5S16.8 75 37.5 75 75 58.2 75 37.5 58.2 0 37.5 0zm0 56.3c-10.4 0-18.8-8.4-18.8-18.8s8.4-18.8 18.8-18.8 18.8 8.4 18.8 18.8-8.4 18.8-18.8 18.8z" fill="#99CCEE"/>
+      <path d="M112.5 18.8c-10.4 0-18.8 8.4-18.8 18.7s8.4 18.8 18.8 18.8 18.8-8.4 18.8-18.8-8.4-18.7-18.8-18.7zm0 28.1c-5.2 0-9.4-4.2-9.4-9.4s4.2-9.4 9.4-9.4 9.4 4.2 9.4 9.4-4.2 9.4-9.4 9.4z" fill="#99CCEE"/>
+      <path d="M187.5 18.8c-10.4 0-18.8 8.4-18.8 18.7s8.4 18.8 18.8 18.8 18.8-8.4 18.8-18.8-8.4-18.7-18.8-18.7zm0 28.1c-5.2 0-9.4-4.2-9.4-9.4s4.2-9.4 9.4-9.4 9.4 4.2 9.4 9.4-4.2 9.4-9.4 9.4z" fill="#99CCEE"/>
+      <path d="M150 18.8c-5.2 0-9.4 4.2-9.4 9.4v18.7c0 5.2 4.2 9.4 9.4 9.4s9.4-4.2 9.4-9.4V28.2c0-5.2-4.2-9.4-9.4-9.4zM150 0c-5.2 0-9.4 4.2-9.4 9.4s4.2 9.4 9.4 9.4 9.4-4.2 9.4-9.4S155.2 0 150 0z" fill="#99CCEE"/>
+    </svg>
+    <p>Jake Heaps &middot; Domo Marketing &middot; <a href="mailto:jake.heaps@domo.com">jake.heaps@domo.com</a></p>
+    <div class="footer-divider"></div>
+    <p class="footer-small">Gemini Enterprise at Domo &middot; 2026</p>
+  </footer>
+
+  <script>
+    // Scroll progress bar
+    window.addEventListener('scroll', function() {
+      var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+      var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      var progress = (scrollTop / scrollHeight) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+    });
+
+    // Intersection Observer for scroll animations
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(function(el) {
+      observer.observe(el);
+    });
+
+    // Active nav link
+    var sections = document.querySelectorAll('section[id]');
+    var navLinks = document.querySelectorAll('.nav-link');
+
+    window.addEventListener('scroll', function() {
+      var scrollY = window.pageYOffset;
+      sections.forEach(function(section) {
+        var sectionTop = section.offsetTop - 100;
+        var sectionHeight = section.offsetHeight;
+        var sectionId = section.getAttribute('id');
+        if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+          navLinks.forEach(function(link) {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === '#' + sectionId) {
+              link.classList.add('active');
+            }
+          });
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
