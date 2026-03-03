@@ -509,121 +509,6 @@
       background: #4A8A6A;
     }
 
-    /* ===== FOUNDATION ===== */
-    .foundation-visual {
-      margin-top: 2.5rem;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
-    }
-
-    .foundation-card {
-      padding: 1.75rem;
-      background: #FFFFFF;
-      border: 1px solid var(--neutral-100);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow-sm);
-      text-align: center;
-      transition: all 0.3s var(--ease-out-expo);
-    }
-
-    .foundation-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .foundation-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: rgba(153, 204, 238, 0.12);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 1rem;
-    }
-
-    .foundation-icon svg {
-      width: 24px;
-      height: 24px;
-      stroke: var(--domo-blue);
-      fill: none;
-      stroke-width: 1.5;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .foundation-card h3 {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      color: var(--neutral-900);
-    }
-
-    .foundation-card p {
-      font-size: 0.875rem;
-      color: var(--neutral-600);
-      line-height: 1.5;
-    }
-
-    /* ===== IMPACT ===== */
-    .impact-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
-      margin-top: 2.5rem;
-    }
-
-    .impact-card {
-      display: flex;
-      gap: 1rem;
-      padding: 1.5rem;
-      background: #FFFFFF;
-      border: 1px solid var(--neutral-100);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-sm);
-      transition: all 0.3s var(--ease-out-expo);
-    }
-
-    .impact-card:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .impact-icon {
-      width: 40px;
-      height: 40px;
-      min-width: 40px;
-      border-radius: 50%;
-      background: rgba(255, 153, 34, 0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .impact-icon svg {
-      width: 20px;
-      height: 20px;
-      stroke: var(--accent-orange);
-      fill: none;
-      stroke-width: 1.5;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .impact-card h3 {
-      font-size: 0.9375rem;
-      font-weight: 700;
-      color: var(--neutral-900);
-      margin-bottom: 0.375rem;
-    }
-
-    .impact-card p {
-      font-size: 0.875rem;
-      color: var(--neutral-600);
-      line-height: 1.5;
-    }
-
     /* ===== FOOTER ===== */
     .footer {
       background: var(--neutral-900);
@@ -674,11 +559,6 @@
     .agents-grid .animate-on-scroll:nth-child(3) { transition-delay: 0.2s; }
     .agents-grid .animate-on-scroll:nth-child(4) { transition-delay: 0.3s; }
     .automation-grid .animate-on-scroll:nth-child(2) { transition-delay: 0.1s; }
-    .foundation-visual .animate-on-scroll:nth-child(2) { transition-delay: 0.1s; }
-    .foundation-visual .animate-on-scroll:nth-child(3) { transition-delay: 0.2s; }
-    .impact-grid .animate-on-scroll:nth-child(2) { transition-delay: 0.1s; }
-    .impact-grid .animate-on-scroll:nth-child(3) { transition-delay: 0.2s; }
-    .impact-grid .animate-on-scroll:nth-child(4) { transition-delay: 0.3s; }
 
     /* ===== RESPONSIVE ===== */
     @media (max-width: 768px) {
@@ -689,8 +569,6 @@
       .agents-grid { grid-template-columns: 1fr; }
       .featured-agent { grid-template-columns: 1fr; }
       .automation-grid { grid-template-columns: 1fr; }
-      .foundation-visual { grid-template-columns: 1fr; }
-      .impact-grid { grid-template-columns: 1fr; }
       .navbar-links { display: none; }
       .section-title { font-size: 1.5rem; }
     }
@@ -716,8 +594,6 @@
       <a href="#overview" class="nav-link">Overview</a>
       <a href="#agents" class="nav-link">Agents</a>
       <a href="#automation" class="nav-link">Automation</a>
-      <a href="#foundation" class="nav-link">Foundation</a>
-      <a href="#impact" class="nav-link">Impact</a>
     </div>
   </nav>
 
@@ -765,10 +641,10 @@
   <section id="overview">
     <div class="container">
       <div class="vision-content animate-on-scroll">
-        <div class="section-label">The Approach</div>
-        <h2 class="section-title" style="text-align: center;">Not Chatbots. Specialized AI Teammates.</h2>
+        <div class="section-label">The Story</div>
+        <h2 class="section-title" style="text-align: center;">One Person. An Entire Department.</h2>
         <p style="margin-top: 1.5rem;">
-          Every agent is purpose-built for one job and grounded in a <strong>Knowledge Graph</strong> — a structured database of Domo's official messaging, products, competitors, and compliance data. This means agents don't just generate content — they generate <strong>accurate</strong> content, validated against the company's source of truth. The result is an AI-powered marketing team that's both creative and trustworthy.
+          Domo's marketing organization is 80+ people strong — spanning demand gen, product marketing, content, competitive intel, paid media, and sales enablement. <strong>One person</strong> on that team built and deployed a suite of Gemini Enterprise agents that now serve the entire department. These aren't experiments or prototypes. They're <strong>production tools</strong> that the team uses every day — drafting content, answering data questions, coaching sales reps, and tracking competitors — all grounded in a Knowledge Graph that ensures every output is accurate and on-brand.
         </p>
       </div>
     </div>
@@ -869,96 +745,6 @@
           </div>
           <p>Automatically generates the CMO's weekly staff report by pulling data from live Domo dashboards, the marketing calendar, and reference documents — then writes the finished report back to SharePoint and notifies the team.</p>
           <div class="auto-schedule"><span class="dot-green"></span> Runs weekly on Fridays</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Foundation -->
-  <section id="foundation">
-    <div class="container">
-      <div class="animate-on-scroll" style="text-align: center;">
-        <div class="section-label">The Foundation</div>
-        <h2 class="section-title" style="margin-left: auto; margin-right: auto;">One Source of Truth for Every Agent</h2>
-        <p class="section-subtitle" style="margin-left: auto; margin-right: auto; text-align: center;">The Knowledge Graph is what makes this system trustworthy. It's a structured database of everything official about Domo — and every agent queries it to validate its output before delivering results.</p>
-      </div>
-
-      <div class="foundation-visual">
-        <div class="foundation-card animate-on-scroll">
-          <div class="foundation-icon">
-            <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
-          </div>
-          <h3>Messaging Knowledge Graph</h3>
-          <p>Products, competitors, industries, value propositions, pain points, compliance data — all structured and queryable through a REST API.</p>
-        </div>
-
-        <div class="foundation-card animate-on-scroll">
-          <div class="foundation-icon">
-            <svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </div>
-          <h3>Automatic Validation</h3>
-          <p>Every piece of content passes through a 6-layer fact-checking cascade before delivery — ensuring no hallucinated claims make it to the end user.</p>
-        </div>
-
-        <div class="foundation-card animate-on-scroll">
-          <div class="foundation-icon">
-            <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-          </div>
-          <h3>Design Knowledge Graph</h3>
-          <p>Brand guidelines, color systems, typography rules, and component specs — so AI-generated designs are always on-brand and consistent.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Impact -->
-  <section id="impact">
-    <div class="container">
-      <div class="animate-on-scroll">
-        <div class="section-label">What Makes This Different</div>
-        <h2 class="section-title">Not Just AI — Accurate AI</h2>
-        <p class="section-subtitle">Most teams experiment with AI. This team built a production system where accuracy isn't optional — it's enforced by architecture.</p>
-      </div>
-
-      <div class="impact-grid">
-        <div class="impact-card animate-on-scroll">
-          <div class="impact-icon">
-            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          </div>
-          <div>
-            <h3>Shared Source of Truth</h3>
-            <p>All five agents query the same Knowledge Graph. When messaging changes, every agent updates instantly — no retraining required.</p>
-          </div>
-        </div>
-
-        <div class="impact-card animate-on-scroll">
-          <div class="impact-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-          </div>
-          <div>
-            <h3>Creative AND Accurate</h3>
-            <p>Agents draft with full Gemini creativity, then validate every claim. The result is content that's both compelling and trustworthy.</p>
-          </div>
-        </div>
-
-        <div class="impact-card animate-on-scroll">
-          <div class="impact-icon">
-            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
-          </div>
-          <div>
-            <h3>Specialized, Not Generic</h3>
-            <p>Each agent is purpose-built for one job — paid media, competitive intel, sales enablement — not a one-size-fits-all chatbot.</p>
-          </div>
-        </div>
-
-        <div class="impact-card animate-on-scroll">
-          <div class="impact-icon">
-            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-          <div>
-            <h3>Built by One Person</h3>
-            <p>This entire system — five agents, two automations, two Knowledge Graphs — was built and is maintained by a single person on the marketing team.</p>
-          </div>
         </div>
       </div>
     </div>
